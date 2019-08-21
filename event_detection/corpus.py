@@ -1,12 +1,16 @@
 import datetime
-from typing import NamedTuple
 from typing import Tuple
 from typing import Set
+import itertools
 
 
-class Text(NamedTuple):
-    content: str
-    time: datetime.datetime
+class Text(object):
+    def __init__(self, post_content: str, post_time: int):
+        self.content = post_content
+        self.time = datetime.datetime.fromtimestamp(post_time)
+
+    def __repr__(self) -> str:
+        return "Text(content={}, time={})".format(self.content, self.time.isoformat())
 
 
 def tokenize(input_str: str) -> Set[str]:
@@ -24,4 +28,4 @@ def two_combinations(tokens: Set[str]) -> Set[Tuple[str, str]]:
     >>> two_combinations({'a', 'b', 'c'})
     {('a', 'b'), ('a', 'c'), ('b', 'c')}
     """
-    raise NotImplementedError
+    return set(itertools.combinations(tokens, 2))
