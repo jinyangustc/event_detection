@@ -1,5 +1,4 @@
 import pytest
-import datetime
 from event_detection.corpus import Text
 from event_detection.corpus import tokenize
 
@@ -61,11 +60,11 @@ def armstrong_quote_2_combinations():
 
 
 def test_create_text():
-    time = datetime.datetime(2019, 8, 19, 18, 52)
+    time = 1566418429
     content = "This is the content"
     text = Text(content, time)
     assert text.content == content
-    assert text.time.isoformat() == time.isoformat()
+    assert text.time.isoformat() == "2019-08-21T15:13:49"
     assert text.content != "Not this one"
 
 
