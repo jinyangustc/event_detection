@@ -1,6 +1,8 @@
 import datetime
 from typing import Tuple
 from typing import Set
+from typing import List
+import re
 import itertools
 
 
@@ -13,10 +15,17 @@ class Text(object):
         return "Text(content={}, time={})".format(self.content, self.time.isoformat())
 
 
-def tokenize(input_str: str) -> Set[str]:
+def tokenize(
+    input_str: str, stop_words: List[str], regex_pattern: str = None
+) -> Set[str]:
     """Split the input string into tokens by space and newline, lower case all
     tokens, remove punctuations in each token, and return a set of tokens."""
-    raise NotImplementedError
+    if regex_pattern is None:
+        regex_pattern = r"\S*\w\s*"
+    token_pattern = re.compile(regex_pattern)
+    tokens = token_pattern.findall(input_str)
+    tokens = [x.lower().strip() for x in tokens if x not in stop_words]
+    return set(tokens)
 
 
 def two_combinations(tokens: Set[str]) -> Set[Tuple[str, str]]:
@@ -28,4 +37,4 @@ def two_combinations(tokens: Set[str]) -> Set[Tuple[str, str]]:
     >>> two_combinations({'a', 'b', 'c'})
     {('a', 'b'), ('a', 'c'), ('b', 'c')}
     """
-    return set(itertools.combinations(tokens, 2))
+    return set(itertools.combinations(sorted(tokens), 2))

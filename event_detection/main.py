@@ -1,5 +1,4 @@
 import datetime
-
 from corpus import Text
 from typing import List
 

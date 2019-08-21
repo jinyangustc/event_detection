@@ -1,6 +1,7 @@
 import pytest
 import datetime
 from event_detection.corpus import Text
+from event_detection.corpus import tokenize
 
 
 @pytest.fixture
@@ -68,21 +69,20 @@ def test_create_text():
     assert text.content != "Not this one"
 
 
-def test_tokenize(armstrong_quote):
-    raise NotImplementedError
-
-
-def test_tokenize_no_punctuation_in_tokens(armstrong_quote):
-    raise NotImplementedError
-
-
-def test_two_combinations(armstrong_quote_2_combinations):
-    raise NotImplementedError
-
-
-def test_two_combinations_orderd_tokens(armstrong_quote_2_combinations):
-    raise NotImplementedError
-
-
-def test_two_combinations_no_repetition_in_return(armstrong_quote_2_combinations):
-    raise NotImplementedError
+def test_tokenize_default_regex():
+    input_str = (
+        "hello Hello HELLO U.S.A. $42.42 "
+        "42.42USD #twittertag hello_world yeah!!! comma, period."
+    )
+    tokens = tokenize(input_str, [])
+    assert set(tokens) == {
+        "hello",
+        "u.s.a",
+        "$42.42",
+        "42.42usd",
+        "#twittertag",
+        "hello_world",
+        "yeah",
+        "comma",
+        "period",
+    }
