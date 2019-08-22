@@ -85,8 +85,12 @@ def event_detect(
 
 if __name__ == "__main__":
     import json
+    import toml
 
-    significance_threshold = 1
+    config = toml.load("../data/config.toml")
+    significance_threshold = config["event_detection"]["significance_threshold"]
+    window_size = config["event_detection"]["window_size"]
+
     with open("../data/stopwords.txt") as f:
         stop_words = [x.strip() for x in f.readlines()]
 
@@ -100,7 +104,7 @@ if __name__ == "__main__":
 
     first_time = posts[0].time
     tracking_boxes = {}
-    for win in window(posts, first_time, datetime.timedelta(hours=2)):
+    for win in window(posts, first_time, datetime.timedelta(hours=window_size)):
         tracking_boxes = event_detect(
             win, tracking_boxes, [], None, significance_threshold
         )

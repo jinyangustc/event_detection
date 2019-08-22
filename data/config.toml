@@ -1,0 +1,3 @@
+[event_detection]
+significance_threshold = 1
+window_size = 2
