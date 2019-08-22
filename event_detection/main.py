@@ -5,6 +5,7 @@ from typing import Dict
 from collections import defaultdict
 
 from box import Box
+from box import consolidate
 from corpus import Text
 from corpus import tokenize
 from corpus import two_combinations
@@ -52,7 +53,7 @@ def event_detect(
     stop_words: List[str],
     regex_pattern: str,
     significance_threshold: int,
-):
+) -> Dict:
 
     win_start, win_end, window = window
 
@@ -88,8 +89,9 @@ if __name__ == "__main__":
     import toml
 
     config = toml.load("../data/config.toml")
-    significance_threshold = config["event_detection"]["significance_threshold"]
-    window_size = config["event_detection"]["window_size"]
+    significance_threshold = config["significance_threshold"]
+    window_size = config["window_size"]
+    similarity_threshold = config["similarity_threshold"]
 
     with open("../data/stopwords.txt") as f:
         stop_words = [x.strip() for x in f.readlines()]
@@ -108,3 +110,4 @@ if __name__ == "__main__":
         tracking_boxes = event_detect(
             win, tracking_boxes, [], None, significance_threshold
         )
+    tree = consolidate(tracking_boxes, similarity_threshold)
