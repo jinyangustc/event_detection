@@ -112,6 +112,7 @@ if __name__ == "__main__":
     import json
     import toml
     import textwrap
+    import time
 
     config = toml.load("../data/config.toml")
     significance_threshold = config["significance_threshold"]
@@ -131,6 +132,7 @@ if __name__ == "__main__":
         for x in wrapper.wrap(text=long_str):
             print(x)
 
+    t1 = time.now()
     results = run(config, stop_words, input_strs)
     for win_start, win_end, box_forest in results:
         print("#" * 79)
@@ -155,3 +157,4 @@ if __name__ == "__main__":
                 print()
 
             print("-" * 79)
+    print("Processed in {} s".format(time.now() - t1))
