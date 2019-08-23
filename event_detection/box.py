@@ -37,17 +37,22 @@ class Box(object):
         )
 
 
-def consolidate(tracking_boxes: Dict, similarity_threshold: float) -> Dict:
-    union_and_find = {wp: wp for wp in tracking_boxes}
+def consolidate(
+    tracking_boxes: Dict, similarity_threshold: float
+) -> Dict[Tuple[str, str], Tuple[str, str]]:
+    """Merge boxes by similarity based on Union and Find algorithm. Returned a
+    mapping dictionary where the key is child box word pair and the value is
+    the parent box word pair."""
+    child_parent_dict = {wp: wp for wp in tracking_boxes}
 
     for (wp1, wp2) in itertools.combinations(tracking_boxes.keys(), 2):
         if similarity(tracking_boxes[wp1], tracking_boxes[wp2]) >= similarity_threshold:
-            parent = union_and_find[wp1]
-            while parent != union_and_find[parent]:
-                parent = union_and_find[parent]
-            union_and_find[wp2] = parent
+            parent = child_parent_dict[wp1]
+            while parent != child_parent_dict[parent]:
+                parent = child_parent_dict[parent]
+            child_parent_dict[wp2] = parent
 
-    return union_and_find
+    return child_parent_dict
 
 
 def similarity(box_a: Box, box_b: Box) -> float:
