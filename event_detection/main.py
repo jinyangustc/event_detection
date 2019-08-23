@@ -5,7 +5,7 @@ from typing import Dict
 from collections import defaultdict
 
 from box import Box
-from box import consolidate
+from box import Storyline
 from corpus import Text
 from corpus import tokenize
 from corpus import two_combinations
@@ -53,6 +53,7 @@ def event_detect(
     stop_words: List[str],
     regex_pattern: str,
     significance_threshold: int,
+    box_keepalive_time: datetime.timedelta,
 ) -> Dict:
 
     win_start, win_end, window = window
@@ -76,7 +77,9 @@ def event_detect(
 
     # Stop tracking boxes that have gone unpopular
     cold_pairs = [
-        wp for wp in tracking_boxes if tracking_boxes[wp].is_older_than(win_start)
+        wp
+        for wp in tracking_boxes
+        if tracking_boxes[wp].is_older_than(win_start + box_keepalive_time)
     ]
     for wp in cold_pairs:
         tracking_boxes.pop(wp)
@@ -84,14 +87,37 @@ def event_detect(
     return tracking_boxes
 
 
+def run(
+    config: Dict[str, str], stop_words: List[str], input_strs: List[Dict[str, str]]
+):
+    posts = []
+    for post in input_strs:
+        posts.append(Text(post["content"], post["timestamp"]))
+
+    first_time = posts[0].time
+    tracking_boxes = {}
+    timeline = []
+    for win in window(posts, first_time, datetime.timedelta(hours=window_size)):
+        tracking_boxes = event_detect(
+            win, tracking_boxes, [], None, significance_threshold, box_keepalive_time
+        )
+        sl = Storyline(tracking_boxes, similarity_threshold)
+        consolidated_boxes = sl.get_consolidated_boxes()
+        win_start, win_end, _ = win
+        timeline.append((win_start, win_end, consolidated_boxes))
+    return timeline
+
+
 if __name__ == "__main__":
     import json
     import toml
+    import textwrap
 
     config = toml.load("../data/config.toml")
     significance_threshold = config["significance_threshold"]
     window_size = config["window_size"]
     similarity_threshold = config["similarity_threshold"]
+    box_keepalive_time = datetime.timedelta(hours=config["box_keepalive_time"])
 
     with open("../data/stopwords.txt") as f:
         stop_words = [x.strip() for x in f.readlines()]
@@ -100,14 +126,32 @@ if __name__ == "__main__":
     with open("../data/example.json") as f:
         input_strs = json.load(f)
 
-    posts = []
-    for post in input_strs:
-        posts.append(Text(post["content"], post["timestamp"]))
+    def print_fix_width(long_str):
+        wrapper = textwrap.TextWrapper(width=79)
+        for x in wrapper.wrap(text=long_str):
+            print(x)
 
-    first_time = posts[0].time
-    tracking_boxes = {}
-    for win in window(posts, first_time, datetime.timedelta(hours=window_size)):
-        tracking_boxes = event_detect(
-            win, tracking_boxes, [], None, significance_threshold
+    results = run(config, stop_words, input_strs)
+    for win_start, win_end, box_forest in results:
+        print("#" * 79)
+        win_header = "window from {} to {}".format(win_start, win_end)
+        print(
+            "{}{}{}".format(
+                " " * int((79 - len(win_header)) / 2),
+                win_header,
+                " " * int((79 - len(win_header)) / 2),
+            )
         )
-    tree = consolidate(tracking_boxes, similarity_threshold)
+        print("#" * 79)
+        for wps, boxes in box_forest:
+
+            # print word pairs
+            print_fix_width(str(wps))
+            print()
+
+            ts = {t for b in boxes for t in b.texts}
+            for t in ts:
+                print_fix_width(t.content)
+                print()
+
+            print("-" * 79)

@@ -1,3 +1,4 @@
 significance_threshold = 1
 window_size = 2
 similarity_threshold = 0.1
+box_keepalive_time = 0

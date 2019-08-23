@@ -12,7 +12,9 @@ class Text(object):
         self.time = datetime.datetime.fromtimestamp(post_time)
 
     def __repr__(self) -> str:
-        return "Text(content={}, time={})".format(self.content, self.time.isoformat())
+        return "Text(post_content={}, post_time={})".format(
+            self.content, self.time.isoformat()
+        )
 
 
 def tokenize(
