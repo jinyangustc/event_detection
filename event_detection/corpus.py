@@ -23,7 +23,7 @@ def tokenize(
     """Split the input string into tokens by space and newline, lower case all
     tokens, remove punctuations in each token, and return a set of tokens."""
     if regex_pattern is None:
-        regex_pattern = r"\S*\w\s*"
+        regex_pattern = r"\S*[^\W_]\s*"
     token_pattern = re.compile(regex_pattern)
     tokens = token_pattern.findall(input_str)
     tokens = [x.lower().strip() for x in tokens if x not in stop_words]
