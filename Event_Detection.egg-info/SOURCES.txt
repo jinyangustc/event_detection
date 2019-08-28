@@ -1,0 +1,11 @@
+setup.py
+Event_Detection.egg-info/PKG-INFO
+Event_Detection.egg-info/SOURCES.txt
+Event_Detection.egg-info/dependency_links.txt
+Event_Detection.egg-info/top_level.txt
+event_detection/__init__.py
+event_detection/box.py
+event_detection/corpus.py
+event_detection/main.py
+tests/__init__.py
+tests/test_text.py

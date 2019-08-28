@@ -1,4 +1,4 @@
-# Apollo Event Detection Module
+# Apollo Event Detection Package
 
 ## Install
 
