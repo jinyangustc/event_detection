@@ -3,3 +3,7 @@ __pycache__/
 .pytest_cache
 .vscode/
 .DS_Store
+
+# Packaging
+*.egg-info/
+dist/
