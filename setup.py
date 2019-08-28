@@ -8,7 +8,7 @@ setuptools.setup(
     version="1.0",
     author="Jinyang Li, Jiawei Tang",
     author_email="",
-    description="An event detection package",
+    description="Apollo event detection package",
     long_description=long_description,
     url="",
     packages=setuptools.find_packages(),
