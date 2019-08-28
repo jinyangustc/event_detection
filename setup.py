@@ -17,6 +17,6 @@ setuptools.setup(
         "License :: University of Illinois at Urbana-Champaign",
         "Operating System :: OS Independent",
     ],
-    install_requires=["toml"],
+    install_requires=["toml", "click"],
     python_requires=">=3.7",
 )

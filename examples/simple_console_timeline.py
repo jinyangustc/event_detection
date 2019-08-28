@@ -3,45 +3,34 @@ import json
 import toml
 import textwrap
 import time
-import sys
-import os
-import getopt
+
+import click
 
 from event_detection.core import event_detect
 
 
-def print_usage() -> str:
-    usage = "\nRequire arguments: \n \
-            -c config file \n \
-            -s stop words file \n \
-            -i input corpus \n "
-    print(usage)
-    exit()
-
-
-def main():
-
-    optlist, _ = getopt.getopt(sys.argv[1:], "c:s:i:")
-    if len(optlist) < 3:
-        print_usage()
-    for argv in optlist:
-        if argv[1] == "":
-            print_usage()
-        elif not os.path.isfile(argv[1]):
-            raise ImportError("Error: file {} doesn't exist".format(argv[1]))
-
-    config = toml.load(optlist[0][1])
+@click.command()
+@click.option(
+    "--config", required=True, type=click.File(), help="Configueration file (.toml)"
+)
+@click.option(
+    "--stopwords", required=True, type=click.File(), help="Stopword file (.txt)"
+)
+@click.option(
+    "--corpus", required=True, type=click.File(), help="Input corpus file (.json)"
+)
+def main(config, stopwords, corpus):
+    config = toml.load(config)
     significance_threshold = config["significance_threshold"]
     window_size = config["window_size"]
     similarity_threshold = config["similarity_threshold"]
     box_keepalive_time = datetime.timedelta(hours=config["box_keepalive_time"])
 
-    with open(optlist[1][1]) as f:
-        stop_words = [x.strip() for x in f.readlines()]
+    # Load stop word list
+    stop_words = [x.strip() for x in stopwords.readlines()]
 
     # Load input corpus
-    with open(optlist[2][1]) as f:
-        input_strs = json.load(f)
+    input_strs = json.load(corpus)
 
     def print_fix_width(long_str):
         wrapper = textwrap.TextWrapper(width=79)
