@@ -38,6 +38,7 @@ def main(config, stopwords, corpus):
             print(x)
 
     t1 = time.time()
+    print("Initialization completes. Start event detection...")
     results = event_detect(
         stop_words,
         input_strs,

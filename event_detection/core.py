@@ -43,7 +43,8 @@ class Box(object):
 class Storyline(object):
     @staticmethod
     def similarity(box_a: Box, box_b: Box) -> float:
-        intersect_len = len([text for text in box_a.texts if text in box_b.texts])
+        intersect_len = len(
+            [text for text in box_a.texts if text in box_b.texts])
         union_len = len(box_a.texts) + len(box_b.texts)
         return intersect_len / union_len
 
@@ -184,7 +185,8 @@ def event_detect(
     box_keepalive_time: int = 0,
     similarity_threshold: float = 0.1,
 ) -> List[
-    Tuple[datetime.datetime, datetime.datetime, List[Tuple[List[WordPair], List[Box]]]]
+    Tuple[datetime.datetime, datetime.datetime,
+          List[Tuple[List[WordPair], List[Box]]]]
 ]:
     posts = []
     for post in input_strs:
@@ -195,7 +197,7 @@ def event_detect(
     timeline = []
     for win in window(posts, first_time, datetime.timedelta(hours=window_size)):
         tracking_boxes = bucketize(
-            win, tracking_boxes, [], None, significance_threshold, box_keepalive_time
+            win, tracking_boxes, stop_words, None, significance_threshold, box_keepalive_time
         )
         sl = Storyline(tracking_boxes, similarity_threshold)
         consolidated_boxes = sl.get_consolidated_boxes()
