@@ -19,3 +19,6 @@ pip install event_detect
 >>> event_detect.run(config, stop_words, input_strs)
 ...
 ```
+
+## Algorithm
+TODO: Explain the insight of the algorithm.
