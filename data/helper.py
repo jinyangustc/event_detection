@@ -1,45 +1,7 @@
 import time
 import datetime
+
 import json
-import math
-from collections import defaultdict
-
-
-def calculate_weights():  # using tf-idf
-    with open("2019-07-1517.json", "r") as f:
-        tweets = json.load(f)
-    tweets = [x["content"] for x in tweets]
-    idf = get_idf(tweets)
-    tfidf = {}
-    for doc in tweets[1:]:
-        tf = get_tf(doc)
-        for word in set(doc.split()):
-            tfidf[word] = tf[word] * idf[word]
-        print(sorted(tfidf.items(), key=lambda x: x[1]))
-        exit()
-
-
-def get_idf(tweets):
-    n = len(tweets)
-    df = defaultdict(int)
-    for doc in tweets:
-        for word in set(doc.split()):
-            df[word] += 1
-    idf = {}
-    for word in df.keys():
-        idf[word] = math.log10(n / (df[word] + 1))
-    return idf
-
-
-def get_tf(doc):
-    tf = {}
-    n = len(doc)
-    count = defaultdict(int)
-    for word in doc.split():
-        count[word] += 1
-    for word in count.keys():
-        tf[word] = count[word] / n
-    return tf
 
 
 def translate_to_json():
@@ -68,9 +30,3 @@ def translate_to_json():
 
     with open("input_data.json", "w+") as f:
         json.dump(output, f)
-
-
-if __name__ == "__main__":
-    # TODO: Assign to Jiawei, make the helper outputs stopword list.
-    # This script should accept a parameter to filter out stopwords
-    calculate_weights()
