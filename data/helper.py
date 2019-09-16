@@ -71,4 +71,6 @@ def translate_to_json():
 
 
 if __name__ == "__main__":
+    # TODO: Assign to Jiawei, make the helper outputs stopword list.
+    # This script should accept a parameter to filter out stopwords
     calculate_weights()
