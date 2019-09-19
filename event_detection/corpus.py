@@ -1,6 +1,9 @@
 import datetime
 import itertools
+import math
 import re
+from collections import Counter
+from typing import Dict
 from typing import List
 from typing import Optional
 from typing import Set
@@ -41,3 +44,35 @@ def two_combinations(tokens: Set[str]) -> Set[Tuple[str, ...]]:
     {('a', 'b'), ('a', 'c'), ('b', 'c')}
     """
     return set(itertools.combinations(sorted(tokens), 2))
+
+
+def inverse_document_frequency(docs: List[str]) -> Dict[str, float]:
+    """A simple Inverse Document Frequency (IDF) implementation."""
+    n = len(docs)
+    df = Counter()
+    for doc in docs:
+        df.update(tokenize(doc, []))
+    idf = {}
+    for word in df.keys():
+        idf[word] = math.log10(n / (df[word] + 1))
+    return idf
+
+
+def term_frequency(doc: str) -> Dict[str, float]:
+    """A simple Term Frequency (TF) implementation."""
+    words = tokenize(doc, [])
+    tf = Counter(words)
+    tf = {k: v / len(words) for k, v in tf.items()}
+    return tf
+
+
+def get_unimportant_words(docs: List[str], tfidf_thresh: float) -> Set[str]:
+    """Get unimportant words from documents by selecting low TF-IDF words."""
+    idf = inverse_document_frequency(docs)
+    output = set()
+    for doc in docs:
+        tf = term_frequency(doc)
+        for word in tf.keys():
+            if tf[word] * idf[word] < tfidf_thresh:
+                output.add(word)
+    return output
