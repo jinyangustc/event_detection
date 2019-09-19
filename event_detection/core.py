@@ -1,9 +1,10 @@
 import datetime
 import itertools
 from collections import defaultdict
-from typing import Tuple
-from typing import List
 from typing import Dict
+from typing import List
+from typing import Optional
+from typing import Tuple
 
 from .corpus import Text
 from .corpus import tokenize
@@ -43,8 +44,7 @@ class Box(object):
 class Storyline(object):
     @staticmethod
     def similarity(box_a: Box, box_b: Box) -> float:
-        intersect_len = len(
-            [text for text in box_a.texts if text in box_b.texts])
+        intersect_len = len([text for text in box_a.texts if text in box_b.texts])
         union_len = len(box_a.texts) + len(box_b.texts)
         return intersect_len / union_len
 
@@ -141,9 +141,9 @@ def bucketize(
     window: Tuple[datetime.datetime, datetime.datetime, List[Text]],
     tracking_boxes: Dict[Tuple[str, str], Box],
     stop_words: List[str],
-    regex_pattern: str,
     significance_threshold: int,
     box_keepalive_time: datetime.timedelta,
+    regex_pattern: Optional[str] = None,
 ) -> Dict[WordPair, Box]:
 
     win_start, win_end, window = window
@@ -182,22 +182,26 @@ def event_detect(
     input_strs: List[Dict[str, str]],
     window_size: int = 2,
     significance_threshold: int = 1,
-    box_keepalive_time: int = 0,
+    box_keepalive_time: datetime.timedelta = datetime.timedelta(hours=0),
     similarity_threshold: float = 0.1,
 ) -> List[
-    Tuple[datetime.datetime, datetime.datetime,
-          List[Tuple[List[WordPair], List[Box]]]]
+    Tuple[datetime.datetime, datetime.datetime, List[Tuple[List[WordPair], List[Box]]]]
 ]:
     posts = []
     for post in input_strs:
-        posts.append(Text(post["content"], post["timestamp"]))
+        posts.append(Text(post["content"], int(post["timestamp"])))
 
     first_time = posts[0].time
     tracking_boxes = {}
     timeline = []
     for win in window(posts, first_time, datetime.timedelta(hours=window_size)):
         tracking_boxes = bucketize(
-            win, tracking_boxes, stop_words, None, significance_threshold, box_keepalive_time
+            win,
+            tracking_boxes,
+            stop_words,
+            significance_threshold,
+            box_keepalive_time,
+            None,
         )
         sl = Storyline(tracking_boxes, similarity_threshold)
         consolidated_boxes = sl.get_consolidated_boxes()

@@ -1,15 +1,16 @@
 import datetime
-from typing import Tuple
-from typing import Set
-from typing import List
-import re
 import itertools
+import re
+from typing import List
+from typing import Optional
+from typing import Set
+from typing import Tuple
 
 
 class Text(object):
-    def __init__(self, post_content: str, post_time: int):
+    def __init__(self, post_content: str, post_unix_epoch: int):
         self.content = post_content
-        self.time = datetime.datetime.fromtimestamp(post_time)
+        self.time = datetime.datetime.fromtimestamp(post_unix_epoch)
 
     def __repr__(self) -> str:
         return "Text(post_content={}, post_time={})".format(
@@ -18,7 +19,7 @@ class Text(object):
 
 
 def tokenize(
-    input_str: str, stop_words: List[str], regex_pattern: str = None
+    input_str: str, stop_words: List[str], regex_pattern: Optional[str] = None
 ) -> Set[str]:
     """Split the input string into tokens by space and newline, lower case all
     tokens, remove punctuations in each token, and return a set of tokens."""
@@ -30,7 +31,7 @@ def tokenize(
     return set(tokens)
 
 
-def two_combinations(tokens: Set[str]) -> Set[Tuple[str, str]]:
+def two_combinations(tokens: Set[str]) -> Set[Tuple[str, ...]]:
     """Return a set of ordered 2-combinations of the input tokens.
 
     'ordered' means for any tuple 't', t[0] < t[1]. The return value is a set,
