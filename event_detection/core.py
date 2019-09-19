@@ -6,7 +6,7 @@ from typing import List
 from typing import Optional
 from typing import Tuple
 
-from .corpus import Text
+from .corpus import Document
 from .corpus import tokenize
 from .corpus import two_combinations
 
@@ -19,33 +19,33 @@ class Box(object):
         start_time: datetime.datetime,
         end_time: datetime.datetime,
         word_pair: WordPair,
-        texts: List[Text],
+        docs: List[Document],
     ):
         """Create a new box."""
         self.start_time = start_time
         self.end_time = end_time
         self.word_pair = word_pair
-        self.texts = texts
+        self.docs = docs
 
-    def update(self, texts: List[Text], win_end: datetime.datetime):
+    def update(self, docs: List[Document], win_end: datetime.datetime):
         """Keep tracking an existing box."""
-        self.texts += texts
+        self.docs += docs
         self.end_time = win_end
 
     def is_older_than(self, t: datetime.datetime) -> bool:
         return self.end_time <= t
 
     def __repr__(self) -> str:
-        return "Box(word_pair={}, num_texts={}, start_time={}, end_time={})".format(
-            str(self.word_pair), len(self.texts), self.start_time, self.end_time
+        return "Box(word_pair={}, num_docs={}, start_time={}, end_time={})".format(
+            str(self.word_pair), len(self.docs), self.start_time, self.end_time
         )
 
 
 class Storyline(object):
     @staticmethod
     def similarity(box_a: Box, box_b: Box) -> float:
-        intersect_len = len([text for text in box_a.texts if text in box_b.texts])
-        union_len = len(box_a.texts) + len(box_b.texts)
+        intersect_len = len([text for text in box_a.docs if text in box_b.docs])
+        union_len = len(box_a.docs) + len(box_b.docs)
         return intersect_len / union_len
 
     @staticmethod
@@ -102,27 +102,27 @@ class Storyline(object):
 
 
 def window(
-    texts: List[Text],
+    docs: List[Document],
     start_time: datetime.datetime,
     window_size: datetime.timedelta,
     step_size: datetime.timedelta = None,
-) -> List[Tuple[datetime.datetime, datetime.datetime, List[Text]]]:
+) -> List[Tuple[datetime.datetime, datetime.datetime, List[Document]]]:
     if step_size is None:
         step_size = window_size
 
     if step_size > window_size:
         raise ValueError("step_size is larger than window_size")
-    texts = sorted(texts, key=lambda x: x.time)
+    docs = sorted(docs, key=lambda x: x.time)
     windows = []
     curr_window = []
     i = 0
     j = -1
-    while i < len(texts):
-        if texts[i].time >= start_time + step_size and j < 0:
+    while i < len(docs):
+        if docs[i].time >= start_time + step_size and j < 0:
             j = i
-        if start_time <= texts[i].time < start_time + window_size:
-            curr_window.append(texts[i])
-        elif texts[i].time >= start_time + window_size:
+        if start_time <= docs[i].time < start_time + window_size:
+            curr_window.append(docs[i])
+        elif docs[i].time >= start_time + window_size:
             windows.append((start_time, start_time + window_size, curr_window))
             curr_window = []
             start_time += step_size
@@ -138,7 +138,7 @@ def window(
 
 
 def bucketize(
-    window: Tuple[datetime.datetime, datetime.datetime, List[Text]],
+    window: Tuple[datetime.datetime, datetime.datetime, List[Document]],
     tracking_boxes: Dict[Tuple[str, str], Box],
     stop_words: List[str],
     significance_threshold: int,
@@ -156,14 +156,14 @@ def bucketize(
         for wp in word_pairs:
             boxes[wp].append(text)
 
-    for wp, texts in boxes.items():
+    for wp, docs in boxes.items():
         if wp in tracking_boxes:
             # Update the box is being tracked
-            tracking_boxes[wp].update(texts, win_end)
+            tracking_boxes[wp].update(docs, win_end)
         else:
             # Create a new box if it is significant
-            if len(texts) >= significance_threshold:
-                tracking_boxes[wp] = Box(win_start, win_end, wp, texts)
+            if len(docs) >= significance_threshold:
+                tracking_boxes[wp] = Box(win_start, win_end, wp, docs)
 
     # Stop tracking boxes that have gone unpopular
     cold_pairs = [
@@ -189,7 +189,7 @@ def event_detect(
 ]:
     posts = []
     for post in input_strs:
-        posts.append(Text(post["content"], int(post["timestamp"])))
+        posts.append(Document(post["content"], int(post["timestamp"])))
 
     first_time = posts[0].time
     tracking_boxes = {}

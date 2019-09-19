@@ -1,10 +1,10 @@
 import datetime
 import json
-import toml
 import textwrap
 import time
 
 import click
+import toml
 
 from event_detection.core import event_detect
 
@@ -64,7 +64,7 @@ def main(config, stopwords, corpus):
             print_fix_width(str(wps))
             print()
 
-            ts = {t for b in boxes for t in b.texts}
+            ts = {t for b in boxes for t in b.docs}
             for t in ts:
                 print_fix_width(t.content)
                 print()

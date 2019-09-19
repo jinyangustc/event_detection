@@ -1,11 +1,11 @@
-from event_detection.corpus import Text
+from event_detection.corpus import Document
 from event_detection.corpus import tokenize
 
 
 def test_create_text():
     time = 1566418429
     content = "This is the content"
-    text = Text(content, time)
+    text = Document(content, time)
     assert text.content == content
     assert text.time.isoformat() == "2019-08-21T15:13:49"
     assert text.content != "Not this one"

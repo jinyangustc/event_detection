@@ -10,13 +10,15 @@ from typing import Set
 from typing import Tuple
 
 
-class Text(object):
+class Document(object):
+    """An abstraction of text with a timestamp."""
+
     def __init__(self, post_content: str, post_unix_epoch: int):
         self.content = post_content
         self.time = datetime.datetime.fromtimestamp(post_unix_epoch)
 
     def __repr__(self) -> str:
-        return "Text(post_content={}, post_time={})".format(
+        return "Document(post_content={}, post_time={})".format(
             self.content, self.time.isoformat()
         )
 
