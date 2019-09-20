@@ -5,7 +5,7 @@ from typing import Dict
 from typing import List
 from typing import Tuple
 
-from .corpus import Document
+from .corpus import Snippet
 from .corpus import tokenize
 from .corpus import two_combinations
 
@@ -18,25 +18,25 @@ class Box(object):
         start_time: datetime.datetime,
         end_time: datetime.datetime,
         word_pair: WordPair,
-        docs: List[Document],
+        snippets: List[Snippet],
     ):
         """Create a new box."""
         self.start_time = start_time
         self.end_time = end_time
         self.word_pair = word_pair
-        self.docs = docs
+        self.snippets = snippets
 
-    def update(self, docs: List[Document], win_end: datetime.datetime):
+    def update(self, snippets: List[Snippet], win_end: datetime.datetime):
         """Keep tracking an existing box."""
-        self.docs += docs
+        self.snippets += snippets
         self.end_time = win_end
 
     def is_older_than(self, t: datetime.datetime) -> bool:
         return self.end_time <= t
 
     def __repr__(self) -> str:
-        return "Box(word_pair={}, num_docs={}, start_time={}, end_time={})".format(
-            str(self.word_pair), len(self.docs), self.start_time, self.end_time
+        return "Box(word_pair={}, num_snippets={}, start_time={}, end_time={})".format(
+            str(self.word_pair), len(self.snippets), self.start_time, self.end_time
         )
 
 
@@ -60,8 +60,10 @@ class Storyline(object):
 
     @staticmethod
     def similarity(box_a: Box, box_b: Box) -> float:
-        intersect_len = len([text for text in box_a.docs if text in box_b.docs])
-        union_len = len(box_a.docs) + len(box_b.docs)
+        intersect_len = len(
+            [snippet for snippet in box_a.snippets if snippet in box_b.snippets]
+        )
+        union_len = len(box_a.snippets) + len(box_b.snippets)
         return intersect_len / union_len
 
     @staticmethod
@@ -101,27 +103,27 @@ class Storyline(object):
 
 
 def window(
-    docs: List[Document],
+    snippets: List[Snippet],
     start_time: datetime.datetime,
     window_size: datetime.timedelta,
     step_size: datetime.timedelta = None,
-) -> List[Tuple[datetime.datetime, datetime.datetime, List[Document]]]:
+) -> List[Tuple[datetime.datetime, datetime.datetime, List[Snippet]]]:
     if step_size is None:
         step_size = window_size
 
     if step_size > window_size:
         raise ValueError("step_size is larger than window_size")
-    docs = sorted(docs, key=lambda x: x.time)
+    snippets = sorted(snippets, key=lambda x: x.time)
     windows = []
     curr_window = []
     i = 0
     j = -1
-    while i < len(docs):
-        if docs[i].time >= start_time + step_size and j < 0:
+    while i < len(snippets):
+        if snippets[i].time >= start_time + step_size and j < 0:
             j = i
-        if start_time <= docs[i].time < start_time + window_size:
-            curr_window.append(docs[i])
-        elif docs[i].time >= start_time + window_size:
+        if start_time <= snippets[i].time < start_time + window_size:
+            curr_window.append(snippets[i])
+        elif snippets[i].time >= start_time + window_size:
             windows.append((start_time, start_time + window_size, curr_window))
             curr_window = []
             start_time += step_size
@@ -137,7 +139,7 @@ def window(
 
 
 def bucketize(
-    win: Tuple[datetime.datetime, datetime.datetime, List[Document]],
+    win: Tuple[datetime.datetime, datetime.datetime, List[Snippet]],
     tracking_boxes: Dict[Tuple[str, str], Box],
     stop_words: List[str],
     significance_threshold: int,
@@ -150,20 +152,20 @@ def bucketize(
 
     # Collect (potential) boxes in the current window
     boxes = defaultdict(list)
-    for doc in win:
-        tokens = tokenize(doc.content, stop_words, regex_pattern, min_word_len)
+    for snippet in win:
+        tokens = tokenize(snippet.content, stop_words, regex_pattern, min_word_len)
         word_pairs = two_combinations(tokens)
         for wp in word_pairs:
-            boxes[wp].append(doc)
+            boxes[wp].append(snippet)
 
-    for wp, docs in boxes.items():
+    for wp, snippets in boxes.items():
         if wp in tracking_boxes:
             # Update the box is being tracked
-            tracking_boxes[wp].update(docs, win_end)
+            tracking_boxes[wp].update(snippets, win_end)
         else:
             # Create a new box if it is significant
-            if len(docs) >= significance_threshold:
-                tracking_boxes[wp] = Box(win_start, win_end, wp, docs)
+            if len(snippets) >= significance_threshold:
+                tracking_boxes[wp] = Box(win_start, win_end, wp, snippets)
 
     # Stop tracking boxes that have gone unpopular
     cold_pairs = [
@@ -191,7 +193,7 @@ def event_detect(
 ]:
     posts = []
     for post in input_strs:
-        posts.append(Document(post["content"], int(post["timestamp"])))
+        posts.append(Snippet(post["content"], int(post["timestamp"])))
 
     first_time = posts[0].time
     tracking_boxes = {}

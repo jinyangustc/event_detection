@@ -1,14 +1,14 @@
-from event_detection.corpus import Document
+from event_detection.corpus import Snippet
 from event_detection.corpus import tokenize
 
 
-def test_create_text():
+def test_create_snippet():
     time = 1566418429
     content = "This is the content"
-    text = Document(content, time)
-    assert text.content == content
-    assert text.time.isoformat() == "2019-08-21T15:13:49"
-    assert text.content != "Not this one"
+    snippet = Snippet(content, time)
+    assert snippet.content == content
+    assert snippet.time.isoformat() == "2019-08-21T15:13:49"
+    assert snippet.content != "Not this one"
 
 
 def test_tokenize_default_regex():

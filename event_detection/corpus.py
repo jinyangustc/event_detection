@@ -10,7 +10,7 @@ from typing import Set
 from typing import Tuple
 
 
-class Document(object):
+class Snippet(object):
     """An abstraction of text with a timestamp."""
 
     def __init__(self, post_content: str, post_unix_epoch: int):
@@ -18,7 +18,7 @@ class Document(object):
         self.time = datetime.datetime.fromtimestamp(post_unix_epoch)
 
     def __repr__(self) -> str:
-        return "Document(post_content={}, post_time={})".format(
+        return "Snippet(content={}, timestamp={})".format(
             self.content, self.time.isoformat()
         )
 
@@ -54,32 +54,32 @@ def two_combinations(tokens: Set[str]) -> Set[Tuple[str, ...]]:
     return set(itertools.combinations(sorted(tokens), 2))
 
 
-def inverse_document_frequency(docs: List[str]) -> Dict[str, float]:
+def inverse_document_frequency(snippets: List[str]) -> Dict[str, float]:
     """A simple Inverse Document Frequency (IDF) implementation."""
-    n = len(docs)
+    n = len(snippets)
     df = Counter()
-    for doc in docs:
-        df.update(tokenize(doc, [], None))
+    for snippet in snippets:
+        df.update(tokenize(snippet, [], None))
     idf = {}
     for word in df.keys():
         idf[word] = math.log10(n / (df[word] + 1))
     return idf
 
 
-def term_frequency(doc: str) -> Dict[str, float]:
+def term_frequency(snippet: str) -> Dict[str, float]:
     """A simple Term Frequency (TF) implementation."""
-    words = tokenize(doc, [], None)
+    words = tokenize(snippet, [], None)
     tf = Counter(words)
     tf = {k: v / len(words) for k, v in tf.items()}
     return tf
 
 
-def get_unimportant_words(docs: List[str], tfidf_thresh: float) -> Set[str]:
+def get_unimportant_words(snippets: List[str], tfidf_thresh: float) -> Set[str]:
     """Get unimportant words from documents by selecting low TF-IDF words."""
-    idf = inverse_document_frequency(docs)
+    idf = inverse_document_frequency(snippets)
     output = set()
-    for doc in docs:
-        tf = term_frequency(doc)
+    for snippet in snippets:
+        tf = term_frequency(snippet)
         for word in tf.keys():
             if tf[word] * idf[word] < tfidf_thresh:
                 output.add(word)

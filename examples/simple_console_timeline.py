@@ -68,7 +68,7 @@ def main(config, stopwords, corpus):
             print_fix_width(str(wps))
             print()
 
-            ts = {t for b in boxes for t in b.docs}
+            ts = {t for b in boxes for t in b.snippets}
             for t in ts:
                 print_fix_width(t.content)
                 print()
