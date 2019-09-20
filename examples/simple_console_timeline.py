@@ -71,6 +71,8 @@ def main(config, stopwords, corpus):
 
             print("-" * 79)
     print("Processed in {} s".format(time.time() - t1))
+    for k, v in config.items():
+        print("{}: {}".format(k, v))
 
 
 if __name__ == "__main__":
