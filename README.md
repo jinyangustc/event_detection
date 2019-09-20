@@ -24,7 +24,7 @@ pip install .
 ### Develop the package
 
 If you want to modify the code, a development environment can be set up as follows:
-```text
+```bash
 git clone https://github.com/jinyangustc/event_detection.git
 cd event_detection
 python3 -m venv venv
@@ -55,11 +55,11 @@ For the documents in each time window (the size of the window is controlled by `
 keywords. Uninteresting keywords, such as "the", "this" and etc., are filtered out by a stopword list provided by the
 user. Then each document is represented by a list of 2-combinations of the keywords. For example, a document with
 keywords:
-```text
+```python
 ["car", "drunk", "dog"]
 ```
 will be represented as:
-```text
+```python
 [("car", "drunk"), ("car", "dog"), ("drunk", "dog")]
 ```
 Then we count the number of occurrences of each keyword pair in the current time window. Only those keyword pairs that
@@ -98,7 +98,7 @@ may refer to the same event instance.
 ## Usage
 
 The core functionality is provided as a library.
-```
+```text
 >>> import toml
 >>> import json
 >>> import event_detect
