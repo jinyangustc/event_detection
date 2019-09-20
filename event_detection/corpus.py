@@ -74,14 +74,15 @@ def term_frequency(snippet: str) -> Dict[str, float]:
     return tf
 
 
-def get_unimportant_words(snippets: List[str], tfidf_thresh: float) -> Set[str]:
+def find_unimportant_words(
+    snippets: List[str], tfidf_thresh: float
+) -> Dict[str, float]:
     """Get unimportant words from documents by selecting low TF-IDF words."""
     idf = inverse_document_frequency(snippets)
-    output = set()
+    stopwords = {}
     for snippet in snippets:
         tf = term_frequency(snippet)
         for word in tf.keys():
             if tf[word] * idf[word] < tfidf_thresh:
-                output.add(word)
-                print("{}: {}".format(word, tf[word] * idf[word]))
-    return output
+                stopwords[word] = tf[word] * idf[word]
+    return stopwords

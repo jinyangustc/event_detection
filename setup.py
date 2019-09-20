@@ -8,7 +8,7 @@ setuptools.setup(
     version="0.1",
     author="Jinyang Li, Jiawei Tang",
     author_email="jinyang7@illinois.edu, jiaweit2@illinois.edu",
-    description="Apollo event detection package",
+    description="Apollo Event Detection (AED) package",
     long_description=long_description,
     url="apollo4.cs.illinois.edu",
     packages=setuptools.find_packages(),
@@ -19,4 +19,5 @@ setuptools.setup(
     ],
     install_requires=["toml", "click"],
     python_requires=">=3.7",
+    entry_points={"console_scripts": ["aed=event_detection.core:cli"]},
 )

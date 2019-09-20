@@ -1,11 +1,18 @@
 import datetime
 import itertools
+import json
+import textwrap
+import time
 from collections import defaultdict
 from typing import Dict
 from typing import List
 from typing import Tuple
 
+import click
+import toml
+
 from .corpus import Snippet
+from .corpus import find_unimportant_words
 from .corpus import tokenize
 from .corpus import two_combinations
 
@@ -213,3 +220,132 @@ def event_detect(
         win_start, win_end, _ = win
         timeline.append((win_start, win_end, consolidated_boxes))
     return timeline
+
+
+@click.group()
+def cli():
+    pass
+
+
+@cli.command()
+@click.option(
+    "-i",
+    "--input-file",
+    required=True,
+    type=click.File(),
+    help="Input snippets JSON file.",
+)
+@click.option(
+    "-t",
+    "--tfidf-threshold",
+    type=float,
+    default=0.1,
+    help=(
+        "TF-IDF score threshold."
+        " Words whose TF-IDF score is lower than this threshold are printed."
+    ),
+)
+@click.option(
+    "-o", "--output-file", type=click.File("w"), help="Save stopwords to output file."
+)
+@click.option(
+    "-v", "--verbose", is_flag=True, help="Output TF-IDF score of each stopword."
+)
+def stopwords(input_file, tfidf_threshold, output_file, verbose):
+    snippets = json.load(input_file)
+    snippets = [x["content"] for x in snippets]
+    stopwords = find_unimportant_words(snippets, tfidf_threshold)
+
+    if verbose:
+        for k, v in stopwords.items():
+            print("{}: {}".format(k, v))
+    else:
+        for k in stopwords.keys():
+            print(k)
+
+    # save output to a file if -o option is provided
+    if output_file:
+        output_file.writelines("\n".join(sorted(stopwords)))
+
+
+@cli.command()
+@click.option(
+    "-c",
+    "--config",
+    required=True,
+    type=click.File(),
+    help="Configuration file (.toml)",
+)
+@click.option(
+    "-s", "--stopwords", required=True, type=click.File(), help="Stopwords file (.txt)"
+)
+@click.option(
+    "-i",
+    "--input-file",
+    required=True,
+    type=click.File(),
+    help="Input corpus file (.json)",
+)
+def detect(config, stopwords, input_file):
+    config = toml.load(config)
+    # tokenization config
+    token_regex_pattern = config["tokenization"]["regex_pattern"]
+    min_word_length = config["tokenization"]["min_word_length"]
+
+    # detection config
+    significance_threshold = config["detection"]["significance_threshold"]
+    window_size = config["detection"]["window_size"]
+    similarity_threshold = config["detection"]["similarity_threshold"]
+    box_keepalive_time = datetime.timedelta(
+        hours=config["detection"]["box_keepalive_time"]
+    )
+
+    # Load stop word list
+    stop_words = [x.strip() for x in stopwords.readlines()]
+
+    # Load input corpus
+    input_strs = json.load(input_file)
+
+    def print_fix_width(long_str):
+        wrapper = textwrap.TextWrapper(width=79)
+        for x in wrapper.wrap(text=long_str):
+            print(x)
+
+    t1 = time.time()
+    print("Initialization completes. Start event detection...")
+    results = event_detect(
+        stop_words,
+        input_strs,
+        window_size,
+        significance_threshold,
+        box_keepalive_time,
+        similarity_threshold,
+        token_regex_pattern,
+        min_word_length,
+    )
+    for win_start, win_end, box_forest in results:
+        print("#" * 79)
+        win_header = "window from {} to {}".format(win_start, win_end)
+        print(
+            "{}{}{}".format(
+                " " * int((79 - len(win_header)) / 2),
+                win_header,
+                " " * int((79 - len(win_header)) / 2),
+            )
+        )
+        print("#" * 79)
+        for wps, boxes in box_forest:
+
+            # print word pairs
+            print_fix_width(str(wps))
+            print()
+
+            ts = {t for b in boxes for t in b.snippets}
+            for t in ts:
+                print_fix_width(t.content)
+                print()
+
+            print("-" * 79)
+    print("Processed in {} s".format(time.time() - t1))
+    for k, v in config.items():
+        print("{}: {}".format(k, v))
