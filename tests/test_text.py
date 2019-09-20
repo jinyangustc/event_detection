@@ -17,7 +17,7 @@ def test_tokenize_default_regex():
         "42.42USD #twittertag hello_world yeah!!! comma, period. "
         "____"
     )
-    tokens = tokenize(input_str, [])
+    tokens = tokenize(input_str, [], None)
     assert set(tokens) == {
         "hello",
         "u.s.a",

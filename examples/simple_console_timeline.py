@@ -25,6 +25,8 @@ def main(config, stopwords, corpus):
     window_size = config["window_size"]
     similarity_threshold = config["similarity_threshold"]
     box_keepalive_time = datetime.timedelta(hours=config["box_keepalive_time"])
+    token_regex = config["token_regex_pattern"]
+    min_word_len = config["min_word_length"]
 
     # Load stop word list
     stop_words = [x.strip() for x in stopwords.readlines()]
@@ -42,10 +44,12 @@ def main(config, stopwords, corpus):
     results = event_detect(
         stop_words,
         input_strs,
-        window_size=window_size,
-        significance_threshold=significance_threshold,
-        box_keepalive_time=box_keepalive_time,
-        similarity_threshold=similarity_threshold,
+        window_size,
+        significance_threshold,
+        box_keepalive_time,
+        similarity_threshold,
+        token_regex,
+        min_word_len,
     )
     for win_start, win_end, box_forest in results:
         print("#" * 79)

@@ -24,7 +24,10 @@ class Document(object):
 
 
 def tokenize(
-    input_str: str, stop_words: List[str], regex_pattern: Optional[str] = None
+    input_str: str,
+    stop_words: List[str],
+    regex_pattern: Optional[str] = None,
+    min_word_len: int = 0,
 ) -> Set[str]:
     """Split the input string into tokens by space and newline, lower case all
     tokens, remove punctuations in each token, and return a set of tokens."""
@@ -34,6 +37,8 @@ def tokenize(
     tokens = token_pattern.findall(input_str)
     tokens = [x.lower().strip() for x in tokens]
     tokens = [x for x in tokens if x not in stop_words]
+    if min_word_len > 0:
+        tokens = [x for x in tokens if len(x) > min_word_len]
     return set(tokens)
 
 
@@ -54,7 +59,7 @@ def inverse_document_frequency(docs: List[str]) -> Dict[str, float]:
     n = len(docs)
     df = Counter()
     for doc in docs:
-        df.update(tokenize(doc, []))
+        df.update(tokenize(doc, [], None))
     idf = {}
     for word in df.keys():
         idf[word] = math.log10(n / (df[word] + 1))
@@ -63,7 +68,7 @@ def inverse_document_frequency(docs: List[str]) -> Dict[str, float]:
 
 def term_frequency(doc: str) -> Dict[str, float]:
     """A simple Term Frequency (TF) implementation."""
-    words = tokenize(doc, [])
+    words = tokenize(doc, [], None)
     tf = Counter(words)
     tf = {k: v / len(words) for k, v in tf.items()}
     return tf
@@ -78,4 +83,5 @@ def get_unimportant_words(docs: List[str], tfidf_thresh: float) -> Set[str]:
         for word in tf.keys():
             if tf[word] * idf[word] < tfidf_thresh:
                 output.add(word)
+                print("{}: {}".format(word, tf[word] * idf[word]))
     return output

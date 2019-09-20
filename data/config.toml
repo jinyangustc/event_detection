@@ -1,5 +1,6 @@
-# TODO: Add comments to explain each parameter
-significance_threshold = 1
-window_size = 2
+token_regex_pattern = '''\S*[^\W_]\s*'''
+min_word_length = 3
+significance_threshold = 10
+window_size = 3
 similarity_threshold = 0.1
 box_keepalive_time = 0
