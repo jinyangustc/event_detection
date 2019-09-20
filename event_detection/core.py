@@ -42,6 +42,23 @@ class Box(object):
 
 
 class Storyline(object):
+    def __init__(self, boxes: Dict[WordPair, Box], similarity_threshold):
+        self.boxes = boxes
+        self.hierarchy = Storyline.consolidate(boxes, similarity_threshold)
+
+    def __repr__(self) -> str:
+        return str(self.hierarchy)
+
+    def get_consolidated_boxes(self) -> List[Tuple[List[WordPair], List[Box]]]:
+        forest = Storyline.flatten_forest(self.hierarchy)
+        consolidated_boxes = []
+        for tree in forest:
+            boxes = []
+            for word_pair in forest[tree]:
+                boxes.append(self.boxes[word_pair])
+            consolidated_boxes.append((forest[tree], boxes))
+        return consolidated_boxes
+
     @staticmethod
     def similarity(box_a: Box, box_b: Box) -> float:
         intersect_len = len([text for text in box_a.docs if text in box_b.docs])
@@ -82,23 +99,6 @@ class Storyline(object):
                 root = hierarchy[root]
             forest[root].append(child)
         return forest
-
-    def __init__(self, boxes: Dict[WordPair, Box], similarity_threshold):
-        self.boxes = boxes
-        self.hierarchy = Storyline.consolidate(boxes, similarity_threshold)
-
-    def __repr__(self) -> str:
-        return str(self.hierarchy)
-
-    def get_consolidated_boxes(self) -> List[Tuple[List[WordPair], List[Box]]]:
-        forest = Storyline.flatten_forest(self.hierarchy)
-        consolidated_boxes = []
-        for tree in forest:
-            boxes = []
-            for word_pair in forest[tree]:
-                boxes.append(self.boxes[word_pair])
-            consolidated_boxes.append((forest[tree], boxes))
-        return consolidated_boxes
 
 
 def window(
