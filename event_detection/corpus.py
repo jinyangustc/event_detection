@@ -32,7 +32,8 @@ def tokenize(
         regex_pattern = r"\S*[^\W_]\s*"
     token_pattern = re.compile(regex_pattern)
     tokens = token_pattern.findall(input_str)
-    tokens = [x.lower().strip() for x in tokens if x not in stop_words]
+    tokens = [x.lower().strip() for x in tokens]
+    tokens = [x for x in tokens if x not in stop_words]
     return set(tokens)
 
 
