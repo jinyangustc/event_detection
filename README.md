@@ -100,7 +100,7 @@ This package comes with a [sample JSON file](data/sample.json) in `data/` folder
 
 ### Generate stop words
 
-The `stopwords` sub-command generates stop word list with a input file (in the format described in [Input format](#Input-format) section).
+The `stopwords` sub-command generates stop word list with an input file (in the format described in [Input format](#Input-format) section).
 ```text
 (venv) ~/git/event_detection $ apollo stopwords --help
 Usage: apollo stopwords [OPTIONS]
