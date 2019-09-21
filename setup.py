@@ -19,5 +19,5 @@ setuptools.setup(
     ],
     install_requires=["toml", "click"],
     python_requires=">=3.7",
-    entry_points={"console_scripts": ["aed=event_detection.core:cli"]},
+    entry_points={"console_scripts": ["apollo=event_detection.core:cli"]},
 )

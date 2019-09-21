@@ -240,18 +240,18 @@ def cli():
     "--tfidf-threshold",
     type=float,
     default=0.1,
+    show_default=True,
     help=(
-        "TF-IDF score threshold."
-        " Words whose TF-IDF score is lower than this threshold are printed."
+        "TF-IDF score threshold. Words with TF-IDF "
+        "score lower than this are considered as stop words."
     ),
 )
 @click.option(
-    "-o", "--output-file", type=click.File("w"), help="Save stopwords to output file."
+    "-o", "--output-file", type=click.File("w"), help="Save stop words to output file."
 )
-@click.option(
-    "-v", "--verbose", is_flag=True, help="Output TF-IDF score of each stopword."
-)
+@click.option("-v", "--verbose", is_flag=True, help="Print TF-IDF scores.")
 def stopwords(input_file, tfidf_threshold, output_file, verbose):
+    """Generate stopwords based on TF-IDF scores."""
     snippets = json.load(input_file)
     snippets = [x["content"] for x in snippets]
     stopwords = find_unimportant_words(snippets, tfidf_threshold)
@@ -265,7 +265,7 @@ def stopwords(input_file, tfidf_threshold, output_file, verbose):
 
     # save output to a file if -o option is provided
     if output_file:
-        output_file.writelines("\n".join(sorted(stopwords)))
+        output_file.writelines("\n".join(sorted(stopwords)) + "\n")
 
 
 @cli.command()
@@ -277,7 +277,11 @@ def stopwords(input_file, tfidf_threshold, output_file, verbose):
     help="Configuration file (.toml)",
 )
 @click.option(
-    "-s", "--stopwords", required=True, type=click.File(), help="Stopwords file (.txt)"
+    "-s",
+    "--stopwords-file",
+    required=True,
+    type=click.File(),
+    help="Stopwords file (.txt)",
 )
 @click.option(
     "-i",
@@ -286,7 +290,8 @@ def stopwords(input_file, tfidf_threshold, output_file, verbose):
     type=click.File(),
     help="Input corpus file (.json)",
 )
-def detect(config, stopwords, input_file):
+def detect(config, stopwords_file, input_file):
+    """Detect events in corpus."""
     config = toml.load(config)
     # tokenization config
     token_regex_pattern = config["tokenization"]["regex_pattern"]
@@ -301,7 +306,7 @@ def detect(config, stopwords, input_file):
     )
 
     # Load stop word list
-    stop_words = [x.strip() for x in stopwords.readlines()]
+    stop_words = [x.strip() for x in stopwords_file.readlines()]
 
     # Load input corpus
     input_strs = json.load(input_file)
