@@ -237,7 +237,7 @@ To make the example short, part of the content is omitted and shown as `[omitted
 
 ### Use the package as a library
 
-The core functions are also exposed as library to facilitate integration with existing analysis pipelines or UIs.
+This pacakge also provides a library to facilitate integration with existing analysis pipelines or UIs.
 ```text
 >>> from event_detection.corpus import Snippet
 >>> Snippet("hello, world", 123456789)
@@ -292,4 +292,4 @@ There is one more twist. Sometimes several created boxes end up with very simila
 ## FAQ
 
 ### Why 2-combinations?
-The reason of using 2-combinations is that 2-combinations of words provides a large enough space to de-multiplex different instances of same type of events. In English, there are about 3000 commonly used words, which is able to cover 95% of common texts. If we use single keywords, the number of events in a time window might exceed the number of words that we have, which means many events cannot be distinguished from each other. If we use 2-combinations of the words, then we have 10^6 combinations which should be sufficient to cover most use cases. On the other hand, the computation time increases as the increase of number of combinations. Therefore, k-combinations where k > 2 might be too slow in practice. time increases as the increase of number of combinations. Therefore, k-combinations where k > 2 might be too slow in practice.
+The reason of using 2-combinations is that 2-combinations of words provides a large enough space to de-multiplex different instances of the same type of events, e.g., different car accidents. In English, there are about 3000 commonly used words, which is able to cover 95% of common texts. If we use single keywords, the number of events in a time window might exceed the number of words that we have, which means many events cannot be distinguished from each other. If we use 2-combinations of the words, then we have 10^6 combinations which should be sufficient to cover most use cases. On the other hand, the computation time increases as the increase of number of combinations. Therefore, k-combinations where k > 2 might be too slow in practice.
