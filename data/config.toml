@@ -1,9 +1,28 @@
 [tokenization]
+
+# The regex expression used to tokenize input strings.
+#     \S* matches 0 or more non-whitespace characters
+#     [^\W_] matches a character that isn't a word or underscore
+#     \s* matches 0 or more whitespace characters
 regex_pattern = '''\S*[^\W_]\s*'''
+
+# Words whose length (number of letters) is less than this threshold will be
+# disgarded by the tokenizer.
 min_word_length = 3
 
 [detection]
+
+# A word pair is considered "significant" only if the number of snippets in the
+# input in the current time window is higher than this value.
 significance_threshold = 10
+
+# The length of a time window (unit: hour)
 window_size = 3
+
+# If the similarity between two boxes are higher than this threshold, they are
+# merged.
 similarity_threshold = 0.1
+
+# After a word pair becomes unpopular, the number of time windows to wait before
+# closing the box (stoping tracking the event)
 box_keepalive_time = 0
