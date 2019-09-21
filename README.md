@@ -223,7 +223,7 @@ A window starts with a header describing the start and end time of the window:
 ###############################################################################
 ```
 
-Boxes (events) are separated by dash lines. A box starts with a list of word pairs which are the result of consolidation (i.e., logically merged boxes), followed by the snippets that contain those word pairs:
+Boxes (events) are separated by dash lines. A box starts with a list of popular word pairs that describe the same event, followed by the snippets that contain those word pairs:
 ```text
 [('guam', 'village'), ('guam', 'inarajan'), ('inarajan', 'village'), ('109km',
 'village'), ('109km', 'inarajan'), ('109km', 'guam'), ('guam', 'merizo'),
