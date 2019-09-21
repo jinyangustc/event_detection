@@ -5,20 +5,20 @@ This is a rewrite of the event detection module in the Apollo Social Sensing too
 ## Install
 
 Get a copy of the code through git-clone:
-```shell script
+```text
 git clone https://github.com/jinyangustc/event_detection.git
 ```
 Or you can simply download a zip file and unzip it.
 
 Then go to the directory:
-```shell script
+```text
 cd /the/path/to/event_detection/
 ```
 
 ### Bash
 
 In the directory of this project:
-```shell script
+```text
 # creat a virtual environment.
 python3 -m venv venv
 
@@ -33,7 +33,7 @@ pip install -e .
 
 [Download](https://www.python.org/downloads/) and install python.
 
-```shell script
+```text
 REM create a virtual environment
 python -m venv .\venv
 
@@ -48,7 +48,7 @@ pip install -e .
 
 [Download](https://www.python.org/downloads/) and install python.
 
-```shell script
+```text
 # create a virtual environment
 python -m venv venv
 
@@ -84,7 +84,7 @@ Additional advanced paramters/settings are mentioned in the algorithm descriptio
 ## Usage
 
 Once installed, this package provides a command line tool called `apollo` which has two sub-commands:
-```console
+```text
 (venv) ~/git/event_detection $ apollo --help
 Usage: apollo [OPTIONS] COMMAND [ARGS]...
 
@@ -101,7 +101,7 @@ This package comes with a [sample JSON file](data/sample.json) in `data/` folder
 ### Generate stop words
 
 The `stopwords` sub-command generates stop word list with a input file (in the format described in [Input format](#Input-format) section).
-```console
+```text
 (venv) ~/git/event_detection $ apollo stopwords --help
 Usage: apollo stopwords [OPTIONS]
 
@@ -118,7 +118,7 @@ Options:
 ```
 
 The following command will use `data/sample.json` file and TF-IDF threshold `0.11` to generate a stop word file `data/stopwords.txt`. The `-v` switch turns on the verbose mode which prints the TF-IDF scores to the STDOUT.
-```console
+```text
 (venv) ~/git/event_detection $ apollo stopwords -v -t 0.11 -i data/sample.json -o data/stopwords.txt
 rt: 0.06357815854140902
 ago: 0.07733288849736422
@@ -133,7 +133,7 @@ more: 0.0813800611445794
 ```
 
 The stop word file should only contain one word per line:
-```console
+```text
 (venv) ~/git/event_detection $ tail data/stopwords.txt
 yes
 yesterday
@@ -150,7 +150,7 @@ zone
 ### Detect events
 
 The `detect` sub-command runs the event detection algorithm described in [the algorithm section](#Algorithm).
-```console
+```text
 (venv) ~/git/event_detection $ apollo detect --help
 Usage: apollo detect [OPTIONS]
 
