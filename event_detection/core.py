@@ -254,18 +254,18 @@ def stopwords(input_file, tfidf_threshold, output_file, verbose):
     """Generate stopwords based on TF-IDF scores."""
     snippets = json.load(input_file)
     snippets = [x["content"] for x in snippets]
-    stopwords = find_unimportant_words(snippets, tfidf_threshold)
+    stop_words = find_unimportant_words(snippets, tfidf_threshold)
 
     if verbose:
-        for k, v in stopwords.items():
+        for k, v in stop_words.items():
             print("{}: {}".format(k, v))
     else:
-        for k in stopwords.keys():
+        for k in stop_words.keys():
             print(k)
 
     # save output to a file if -o option is provided
     if output_file:
-        output_file.writelines("\n".join(sorted(stopwords)) + "\n")
+        output_file.writelines("\n".join(sorted(stop_words)) + "\n")
 
 
 @cli.command()
