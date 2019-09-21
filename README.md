@@ -4,50 +4,61 @@ This is a rewrite of the event detection module in the Apollo Social Sensing too
 
 ## Install
 
-Get a copy of the code through git-clone.
-```text
+Get a copy of the code through git-clone:
+```shell script
 git clone https://github.com/jinyangustc/event_detection.git
 ```
 Or you can simply download a zip file and unzip it.
 
-Then go to directory.
-```text
+Then go to the directory:
+```shell script
 cd /the/path/to/event_detection/
 ```
 
-### Use the package
+### Bash
 
 In the directory of this project:
-```bash
+```shell script
 # creat a virtual environment.
 python3 -m venv venv
 
 # activate the virtual environment
 source venv/bin/activate
 
-# install the package in the virtual environment
-pip install .
-```
-
-### Set up a develop environment
-
-If you want to modify the code, a development environment can be set up as follows:
-```bash
-git clone https://github.com/jinyangustc/event_detection.git
-cd event_detection
-python3 -m venv venv
-source venv/bin/activate
-
-# install the package in the virtual environment in editable mode
-# For more information about installing local packages with `pip`, see `pip help install`
+# install the package
 pip install -e .
-
-# install development dependencies, such as pre-commit, pytest and black, etc.
-pip install -r requirements.txt
-
-# initialize pre-commit hooks
-pre-commit install
 ```
+
+### CMD (Windows)
+
+[Download](https://www.python.org/downloads/) and install python.
+
+```shell script
+REM create a virtual environment
+python -m venv .\venv
+
+REM activate the virtual environment
+venv\Scripts\activate.bat
+
+REM install the package
+pip install -e .
+```
+
+### PowerShell (Windows)
+
+[Download](https://www.python.org/downloads/) and install python.
+
+```shell script
+# create a virtual environment
+python -m venv venv
+
+# activate the virtual environment
+venv/Scripts/Activate.ps1
+
+# install the package
+pip install -e .
+```
+
 ## Input format
 
 The input is a list (or stream) of short text snippets, each with its own timestamp. Those snippets can represent text from tweets, tags of instagram images, comments on reddit, headlines from news websites, sentences/subject lines from emails, or some combination of the above. Whatever, the source is, it needs to reformatted as a JSON list of objects (dictionary) with two required keys: "content" and "timestamp", representing the respective snippests and their times. The timestamp is in standard UNIX time format. For example:
