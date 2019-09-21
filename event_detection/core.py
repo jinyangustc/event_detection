@@ -247,7 +247,10 @@ def cli():
     ),
 )
 @click.option(
-    "-o", "--output-file", type=click.File("w"), help="Save stop words to output file."
+    "-o",
+    "--output-file",
+    type=click.File("w", encoding="utf-8"),
+    help="Save stop words to output file.",
 )
 @click.option("-v", "--verbose", is_flag=True, help="Print TF-IDF scores.")
 def stopwords(input_file, tfidf_threshold, output_file, verbose):
