@@ -1,6 +1,6 @@
 # Apollo Event Detection Package
 
-This is a rewrite of the event detection module in the Apollo Social Sensing toolkit. The code is migrated to Python 3 and appropriate abstractions are introduced to improve code reuse.
+A command line tool and a Python library from the Apollo Social Sensing toolkit.
 
 ## Install
 
