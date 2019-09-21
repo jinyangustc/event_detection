@@ -84,7 +84,7 @@ Additional advanced paramters/settings are mentioned in the algorithm descriptio
 ## Usage
 
 Once installed, this package provides a command line tool called `apollo` which has two sub-commands:
-```text
+```console
 (venv) ~/git/event_detection $ apollo --help
 Usage: apollo [OPTIONS] COMMAND [ARGS]...
 
@@ -101,7 +101,7 @@ This package comes with a [sample JSON file](data/sample.json) in `data/` folder
 ### Generate stop words
 
 The `stopwords` sub-command generates stop word list with a input file (in the format described in [Input format](#Input-format) section).
-```text
+```console
 (venv) ~/git/event_detection $ apollo stopwords --help
 Usage: apollo stopwords [OPTIONS]
 
@@ -118,7 +118,7 @@ Options:
 ```
 
 The following command will use `data/sample.json` file and TF-IDF threshold `0.11` to generate a stop word file `data/stopwords.txt`. The `-v` switch turns on the verbose mode which prints the TF-IDF scores to the STDOUT.
-```text
+```console
 (venv) ~/git/event_detection $ apollo stopwords -v -t 0.11 -i data/sample.json -o data/stopwords.txt
 rt: 0.06357815854140902
 ago: 0.07733288849736422
@@ -133,7 +133,7 @@ more: 0.0813800611445794
 ```
 
 The stop word file should only contain one word per line:
-```text
+```console
 (venv) ~/git/event_detection $ tail data/stopwords.txt
 yes
 yesterday
@@ -150,7 +150,7 @@ zone
 ### Detect events
 
 The `detect` sub-command runs the event detection algorithm described in [the algorithm section](#Algorithm).
-```text
+```console
 (venv) ~/git/event_detection $ apollo detect --help
 Usage: apollo detect [OPTIONS]
 
