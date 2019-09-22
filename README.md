@@ -83,6 +83,12 @@ Additional advanced paramters/settings are mentioned in the algorithm descriptio
 
 ## Usage
 
+TL;DR
+```text
+(venv) ~/git/event_detection $ apollo stopwords -v -t 0.11 -i data/sample.json -o data/stopwords.txt
+(venv) ~/git/event_detection $ apollo detect -c data/config.toml -i data/sample.json -s data/stopwords.txt > timeline.txt
+```
+
 Once installed, this package provides a command line tool called `apollo` which has two sub-commands:
 ```text
 (venv) ~/git/event_detection $ apollo --help
