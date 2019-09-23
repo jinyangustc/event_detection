@@ -59,16 +59,16 @@ venv/Scripts/Activate.ps1
 pip install -e .
 ```
 
-## Usage
+## Test run
 
-To run the event detection tool on a sample input, provided in this release under `data/sample.json`, using a configuration provided under `data/config.toml`, execute the two lines below. The first line prepares a list of stopwords, stopwords.txt. The second line executes the tool. 
+To run the event detection tool on a sample input, provided in this release under `data/sample.json`, using a configuration provided under `data/config.toml`, execute the two lines below. The first line prepares a list of stopwords, `stopwords.txt`. The second line executes the tool. 
 
 ```text
 (venv) ~/git/event_detection $ apollo stopwords -v -t 0.11 -i data/sample.json -o data/stopwords.txt
 (venv) ~/git/event_detection $ apollo detect -c data/config.toml -i data/sample.json -s data/stopwords.txt > timeline.txt
 ```
 
-The output `timeline.txt` will contain detected events. The format of output, input, and configuation file, as well algorithm description is given next.
+The output `timeline.txt` will contain detected events. The format of output, input, and configuation file, as well algorithm description are given next.
 
 ## Output format
 DESCRIBE OUTPUT FORMAT HERE.
