@@ -59,6 +59,20 @@ venv/Scripts/Activate.ps1
 pip install -e .
 ```
 
+## Usage
+
+To run the event detection tool on a sample input, provided in this release under `data/sample.json`, using a configuration provided under `data/config.toml`, execute the two lines below. The first line prepares a list of stopwords, stopwords.txt. The second line executes the tool. 
+
+```text
+(venv) ~/git/event_detection $ apollo stopwords -v -t 0.11 -i data/sample.json -o data/stopwords.txt
+(venv) ~/git/event_detection $ apollo detect -c data/config.toml -i data/sample.json -s data/stopwords.txt > timeline.txt
+```
+
+The output `timeline.txt` will contain detected events. The format of output, input, and configuation file, as well algorithm description is given next.
+
+## Output format
+DESCRIBE OUTPUT FORMAT HERE.
+
 ## Input format
 
 The input is a list (or stream) of short text snippets, each with its own timestamp. Those snippets can represent text from tweets, tags of instagram images, comments on reddit, headlines from news websites, sentences/subject lines from emails, or some combination of the above. Whatever, the source is, it needs to reformatted as a JSON list of objects (dictionary) with two required keys: "content" and "timestamp", representing the respective snippests and their times. The timestamp is in standard UNIX time format. For example:
@@ -82,12 +96,6 @@ The algorithm chops up the input stream (or file) into windows (by time). In eac
 Additional advanced paramters/settings are mentioned in the algorithm description below if you want to fine-tune performance and you understand the internals of the algorithm. These internals are described next.
 
 ## Usage
-
-TL;DR
-```text
-(venv) ~/git/event_detection $ apollo stopwords -v -t 0.11 -i data/sample.json -o data/stopwords.txt
-(venv) ~/git/event_detection $ apollo detect -c data/config.toml -i data/sample.json -s data/stopwords.txt > timeline.txt
-```
 
 Once installed, this package provides a command line tool called `apollo` which has two sub-commands:
 ```text
