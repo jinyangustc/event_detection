@@ -68,10 +68,8 @@ To run the event detection tool on a sample input, provided in this release unde
 (venv) ~/git/event_detection $ apollo detect -c data/config.toml -i data/sample.json -s data/stopwords.txt > timeline.txt
 ```
 
-The output `timeline.txt` will contain detected events. The format of output, input, and configuation file, as well algorithm description are given next.
+The output `timeline.txt` will contain detected events. The format of the input, general algorithm usage rules, algorithm description/configuration, and output format are given next.
 
-## Output format
-DESCRIBE OUTPUT FORMAT HERE.
 
 ## Input format
 
