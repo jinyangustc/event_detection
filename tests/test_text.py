@@ -3,10 +3,9 @@ from event_detection.corpus import tokenize
 
 
 def test_create_snippet():
-    time = 1566418429
-    content = "This is the content"
-    snippet = Snippet(content, time)
-    assert snippet.content == content
+    post = {"timestamp": 1566418429, "content": "This is the content"}
+    snippet = Snippet(post)
+    assert snippet.content == post["content"]
     assert snippet.time.isoformat() == "2019-08-21T15:13:49"
     assert snippet.content != "Not this one"
 

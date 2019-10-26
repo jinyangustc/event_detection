@@ -8,19 +8,39 @@ from typing import List
 from typing import Optional
 from typing import Set
 from typing import Tuple
+from typing import TypeVar
+
+
+T = TypeVar("T", int, str)
 
 
 class Snippet(object):
     """An abstraction of text with a timestamp."""
 
-    def __init__(self, post_content: str, post_unix_epoch: int):
-        self.content = post_content
-        self.time = datetime.datetime.fromtimestamp(post_unix_epoch)
+    def __init__(
+        self,
+        snippet: Dict[str, T],
+        content_key: str = "content",
+        timestamp_key: str = "timestamp",
+    ):
+        self._snippet = snippet
+        self._content_key = content_key
+        self._timestamp_key = timestamp_key
+
+    @property
+    def content(self) -> str:
+        return self._snippet[self._content_key]
+
+    @property
+    def time(self) -> datetime.datetime:
+        return datetime.datetime.fromtimestamp(self._snippet[self._timestamp_key])
+
+    @property
+    def raw_dict(self) -> Dict[str, T]:
+        return self._snippet
 
     def __repr__(self) -> str:
-        return "Snippet(content={}, timestamp={})".format(
-            self.content, self.time.isoformat()
-        )
+        return f"Snippet(content={self.content}, timestamp={self.time.isoformat()})"
 
 
 def tokenize(

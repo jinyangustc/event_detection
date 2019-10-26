@@ -200,7 +200,7 @@ def event_detect(
 ]:
     posts = []
     for post in input_strs:
-        posts.append(Snippet(post["content"], int(post["timestamp"])))
+        posts.append(Snippet(post))
 
     first_time = posts[0].time
     tracking_boxes = {}
